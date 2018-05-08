@@ -406,10 +406,5 @@ def main():
     return json.dumps({})
 
 
-@app.route("/pls/", methods=['GET'])
-def main():
-    return 'suh'
-
-
 if __name__ == "__main__":
     app.run(debug=True)
