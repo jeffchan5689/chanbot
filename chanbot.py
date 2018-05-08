@@ -373,6 +373,8 @@ def main():
 
     text = request.form.get("text", "")
 
+    print text
+
     # match = re.findall(r'(yo chanbot|chanbot)', text)
     if not text.lower().startswith(trigger):
         return
