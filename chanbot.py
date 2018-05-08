@@ -355,19 +355,22 @@ def help(topic=''):
 
 @app.route("/", methods=['POST'])
 def main():
-    # ignore message we sent
+    # ignore message sent from chanbot or from slackbot
+    trigger = "yo chanbot"
     user = request.form.get("user_name", "").strip()
-    print request
-    if user == username or user.lower() == "slackbot": return
+
+    if user == username or "bot" in user:
+        return
 
     text = request.form.get("text", "")
 
-    match = re.findall(r"^!(\S+)", text)
-    if not match: return
+    # match = re.findall(r'(yo chanbot|chanbot)', text)
+    if not text.lower().startsWith(trigger):
+        return
 
-    command = match[0]
-    args = text[text.find("!%s" % command) + len(command) + 1:]
-    command = command.lower()
+    args = text[len(trigger) + 1:].split(" ")
+
+    command = args[0]
 
     if command not in commands:
         if giphy:
