@@ -323,43 +323,41 @@ def ready(msguser):
         post_message('You already went during this standup')
 
 
-def help(topic=''):
-    if topic == '':
+def help(args):
+    if len(args) == 0:
         post_message(
             'My commands are !standup, !start, !cancel, !next, !ready, !skip, !later, !table, !left, !ignore, !heed, '
             'and !ignoring.\nAsk me "!help <command> to learn what they do.')
         return jsonify(text='<https://media.giphy.com/media/rl0FOxdz7CcxO/giphy.gif|IT\'S HAPPENING>')
 
-    topic = topic[1:]
-    if topic == 'standup' or topic == '!standup':
+    help_item = args[1]
+    if help_item == 'standup':
         post_message('Type !standup to initiate a new standup')
-    elif topic == 'start' or topic == '!start':
+    elif help_item == 'start':
         post_message('Type !start to get started with standup once everyone is ready')
-    elif topic == 'cancel' or topic == '!cancel':
+    elif help_item == 'cancel':
         post_message('Type !cancel if you\'d like to stop the standup entirely.')
-    elif topic == 'next' or topic == '!next':
+    elif help_item == 'next':
         post_message('Type !next to call on the next person when you\'re done standing up')
-    elif topic == 'skip' or topic == '!skip':
+    elif help_item == 'skip':
         post_message('Type !skip to skip someone who isn\'t standing up that day')
-    elif topic == 'later' or topic == '!later':
+    elif help_item == 'later':
         post_message('Type !later to move someone who isn\'t ready yet to the end of the list')
-    elif topic == 'table' or topic == '!table':
+    elif help_item == 'table':
         post_message(
             'Type !table <topic> to save a topic for later discussion. I\'ll list these for you when standup is over.')
-    elif topic == 'left' or topic == '!left':
+    elif help_item == 'left':
         post_message('Type !left to find out who is left in the standup')
-    elif topic == 'ignore' or topic == '!ignore':
+    elif help_item == 'ignore':
         post_message('Type !ignore <username> to temporarily skip a user during standup for a while')
-    elif topic == 'heed' or topic == '!heed':
+    elif help_item == 'heed':
         post_message('Type !heed <username> to add an ignored user back, starting with the next standup')
-    elif topic == 'ignoring' or topic == '!ignoring':
+    elif help_item == 'ignoring':
         post_message('Type !ignoring to find out who we\'re skipping over for standups')
-    elif topic == 'ready' or topic == '!ready':
+    elif help_item == 'ready':
         post_message('Type !ready to skip ahead in the queue and give your standup immediately')
     else:
-        post_message('Not sure what "%s" is.' % topic)
-        if giphy:
-            post_message('/giphy %s' % topic)
+        post_message('Not sure how to help with "%s".' % args)
 
 
 @app.route("/", methods=['POST'])
@@ -373,28 +371,19 @@ def main():
 
     text = request.form.get("text", "")
 
-    print text
-
     # match = re.findall(r'(yo chanbot|chanbot)', text)
     if not text.lower().startswith(trigger):
         return
 
     args = text[len(trigger) + 1:].split(" ")
 
-    print args
-
     command = args[0]
-
-    print command
 
     if command not in commands:
         if giphy:
             giphy("%s %s" % (command, args))
         else:
             post_message('Not sure what "%s" is.' % command)
-        return json.dumps({})
-    elif not in_progress and command != 'standup' and command != 'help' and command != 'ignore' and command != 'heed' and command != 'ignoring':
-        post_message('Looks like standup hasn\'t started yet. Type !standup.')
         return json.dumps({})
 
     if command == 'standup':
