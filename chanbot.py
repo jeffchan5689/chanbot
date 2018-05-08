@@ -381,7 +381,11 @@ def main():
 
     args = text[len(trigger) + 1:].split(" ")
 
+    print args
+
     command = args[0]
+
+    print command
 
     if command not in commands:
         if giphy:
