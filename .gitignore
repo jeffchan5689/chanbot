@@ -5,3 +5,5 @@
 .pyc
 git add
 .idea
+
+venv/

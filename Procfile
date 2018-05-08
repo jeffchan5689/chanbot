@@ -1,1 +1,1 @@
-web: gunicorn morgenbot:app
+web: gunicorn chanbot:app

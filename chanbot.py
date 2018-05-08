@@ -11,6 +11,7 @@ import urllib2
 from slacker import Slacker
 
 from flask import Flask, request
+
 app = Flask(__name__)
 
 curdir = os.path.dirname(os.path.abspath(__file__))
@@ -23,11 +24,13 @@ channel = os.getenv('CHANNEL', '#nuclear-testing')
 ignore_users = os.getenv('IGNORE_USERS', '[]')
 
 init_greeting = os.getenv('INIT_GREETING', 'Good morning!')
-start_message = os.getenv('START_MESSAGE', 'What did you work on yesterday? What are you working on today? What, if any, are your blockers?')
+start_message = os.getenv('START_MESSAGE',
+                          'What did you work on yesterday? What are you working on today? What, if any, are your blockers?')
 
 giphy = True if os.getenv('GIPHY', 'false').lower() == 'true' else False
 
-commands = ['standup','start','cancel','next','skip','later','table','left','ignore','heed','ignoring','ready','help']
+commands = ['standup', 'start', 'cancel', 'next', 'skip', 'later', 'table', 'left', 'ignore', 'heed', 'ignoring',
+            'ready', 'help']
 
 users = []
 topics = []
@@ -36,22 +39,26 @@ in_progress = False
 current_user = ''
 absent_users = []
 
+
 def post_message(text, attachments=[]):
-    slack.chat.post_message(channel     = channel,
-                            text        = text,
-                            username    = username,
-                            parse       = 'full',
-                            link_names  = 1,
-                            attachments = attachments,
-                            icon_emoji  = icon_emoji)
+    slack.chat.post_message(channel=channel,
+                            text=text,
+                            username=username,
+                            parse='full',
+                            link_names=1,
+                            attachments=attachments,
+                            icon_emoji=icon_emoji)
+
 
 def get_user(id):
     user = slack.users.info(id).body
     return user['user']['name']
 
+
 def get_channel(id):
     channel = slack.channels.info(id).body
     return channel['channel']['name']
+
 
 def init():
     global users
@@ -68,6 +75,7 @@ def init():
     in_progress = True
     post_message('%s, @channel! Please type !start when you are ready to stand up.' % init_greeting)
 
+
 def start():
     global time
 
@@ -78,10 +86,12 @@ def start():
     post_message('Let\'s get started! %s\nWhen you\'re done, please type !next' % start_message)
     next()
 
+
 def cancel():
     tabled()
     post_message('Standup is cancelled. Bye!')
     reset()
+
 
 def done():
     global time
@@ -91,6 +101,7 @@ def done():
     tabled()
     post_message('Bye!')
     reset()
+
 
 def reset():
     global users
@@ -105,6 +116,7 @@ def reset():
     in_progress = False
     current_user = ''
 
+
 def standup_users():
     global ignore_users
     global absent_users
@@ -112,8 +124,8 @@ def standup_users():
     ignore_users_array = eval(ignore_users)
 
     channel_id = '';
-    channel_name = channel.replace('#', '') # for some reason we skip the # in this API call
-    all_channels = slack.channels.list(1) # 1 means we skip any archived rooms
+    channel_name = channel.replace('#', '')  # for some reason we skip the # in this API call
+    all_channels = slack.channels.list(1)  # 1 means we skip any archived rooms
     for one_channel in all_channels.body['channels']:
         if one_channel['name'] == channel_name:
             channel_id = one_channel['id']
@@ -133,6 +145,7 @@ def standup_users():
 
     return active_users
 
+
 def next():
     global users
     global current_user
@@ -143,17 +156,20 @@ def next():
         current_user = users.pop()
         post_message('@%s, you\'re up' % current_user)
 
+
 def standup_time():
     if len(time) != 2: return
     seconds = (time[1] - time[0]).total_seconds()
     minutes = seconds / 60
     post_message('That\'s everyone! Standup took us %d minutes.' % minutes)
 
+
 def left():
     if len(users) == 0:
         post_message('That\'s everyone!')
     else:
         post_message('Here\'s who\'s left: @' + ', @'.join(users))
+
 
 def ignore(user):
     global ignore_users
@@ -172,6 +188,7 @@ def ignore(user):
     elif user in active_users:
         absent_users.append(user)
         post_message('I won\'t call on @%s again until I am told to using !heed <username>.' % user)
+
 
 def heed(user):
     global ignore_users
@@ -193,6 +210,7 @@ def heed(user):
         absent_users.remove(user)
         post_message('I\'ll start calling on @%s again at the next standup.' % user)
 
+
 def ignoring():
     global ignore_users
     global absent_users
@@ -206,14 +224,17 @@ def ignoring():
     if len(absent_users) != 0:
         post_message('Here\'s who we\'re ignoring for now: ' + ', '.join(absent_users))
 
+
 def skip():
     post_message('Skipping @%s.' % current_user)
     next()
-    
+
+
 def later():
     post_message('We\'ll call on @%s later.' % current_user)
     users.append(current_user)
     next()
+
 
 def table(topic_user, topic):
     global topics
@@ -232,11 +253,13 @@ def table(topic_user, topic):
     post_message('@%s: Tabled.' % topic_user)
     topics.append(str(topic))
 
+
 def tabled():
     if len(topics) == 0: return
     post_message('Tabled topics:')
     for topic in topics:
         post_message('-%s' % topic)
+
 
 def giphy(text):
     url = 'http://api.giphy.com/v1/gifs/search?q=%s&api_key=dc6zaTOxFJmzC&limit=1' % urllib2.quote(text.encode("utf8"))
@@ -254,6 +277,7 @@ def giphy(text):
         }]
 
         post_message('Not sure what "%s" is.' % text, json.dumps(attachments))
+
 
 def ready(msguser):
     global ignore_users
@@ -287,9 +311,11 @@ def ready(msguser):
     else:
         post_message('You already went during this standup')
 
+
 def help(topic=''):
     if topic == '':
-        post_message('My commands are !standup, !start, !cancel, !next, !ready, !skip, !later, !table, !left, !ignore, !heed, and !ignoring.\nAsk me "!help <command> to learn what they do.')
+        post_message(
+            'My commands are !standup, !start, !cancel, !next, !ready, !skip, !later, !table, !left, !ignore, !heed, and !ignoring.\nAsk me "!help <command> to learn what they do.')
         return
 
     topic = topic[1:]
@@ -306,7 +332,8 @@ def help(topic=''):
     elif topic == 'later' or topic == '!later':
         post_message('Type !later to move someone who isn\'t ready yet to the end of the list')
     elif topic == 'table' or topic == '!table':
-        post_message('Type !table <topic> to save a topic for later discussion. I\'ll list these for you when standup is over.')
+        post_message(
+            'Type !table <topic> to save a topic for later discussion. I\'ll list these for you when standup is over.')
     elif topic == 'left' or topic == '!left':
         post_message('Type !left to find out who is left in the standup')
     elif topic == 'ignore' or topic == '!ignore':
@@ -321,6 +348,7 @@ def help(topic=''):
         post_message('Not sure what "%s" is.' % topic)
         if giphy:
             post_message('/giphy %s' % topic)
+
 
 @app.route("/", methods=['POST'])
 def main():
@@ -342,10 +370,10 @@ def main():
             giphy("%s %s" % (command, args))
         else:
             post_message('Not sure what "%s" is.' % command)
-        return json.dumps({ })
+        return json.dumps({})
     elif not in_progress and command != 'standup' and command != 'help' and command != 'ignore' and command != 'heed' and command != 'ignoring':
         post_message('Looks like standup hasn\'t started yet. Type !standup.')
-        return json.dumps({ })
+        return json.dumps({})
 
     if command == 'standup':
         init()
@@ -373,8 +401,9 @@ def main():
         help(args)
     elif command == 'ready':
         ready(msguser)
-        
-    return json.dumps({ })
+
+    return json.dumps({})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
