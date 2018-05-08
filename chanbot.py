@@ -172,44 +172,54 @@ def left():
         post_message('Here\'s who\'s left: @' + ', @'.join(users))
 
 
-def ignore(user):
+def ignore(args):
     global ignore_users
     global absent_users
     active_users = standup_users()
 
-    if user == '':
+    if args == '':
         post_message('Who should I ignore?')
         return
 
-    user = user[1:]
-    if user not in active_users and user not in ignore_users and user not in absent_users:
-        post_message('I don\'t recognize that user.')
-    elif user in ignore_users or user in absent_users:
-        post_message('I\'m already ignoring that user.')
-    elif user in active_users:
-        absent_users.append(user)
-        post_message('I won\'t call on @%s again until I am told to using !heed <username>.' % user)
+    if "jeff" in (user.lower() for user in args[1:]):
+        post_message('Nah. Fuck that. Try again kid.')
+        return
+
+    message = ""
+    for user in args[1:]:
+        if user not in active_users and user not in ignore_users and user not in absent_users:
+            message += 'I don\'t recognize @%s.' % user
+        elif user in ignore_users or user in absent_users:
+            message += 'I\'m already ignoring @%s.' % user
+        elif user in active_users:
+            absent_users.append(user)
+            message += 'I won\'t call on @%s again until I am told to using "!heed @%s."' % (user, user)
+
+    post_message(message)
 
 
-def heed(user):
+def heed(args):
     global ignore_users
     global absent_users
     active_users = standup_users()
 
-    if user == '':
+    if args == '':
         post_message('Who should I heed?')
         return
 
-    user = user[1:]
-    if user not in active_users and user not in ignore_users and user not in absent_users:
-        post_message('I don\'t recognize that user.')
-    elif user in ignore_users:
-        post_message('We never call on that user. Try asking my admin to heed that username.')
-    elif user in active_users:
-        post_message('I\'m not ignoring that user.')
-    elif user in absent_users:
-        absent_users.remove(user)
-        post_message('I\'ll start calling on @%s again at the next standup.' % user)
+    message = ""
+    for user in args[1:]:
+        if user not in active_users and user not in ignore_users and user not in absent_users:
+            message += 'I don\'t recognize that user.'
+        elif user in ignore_users:
+            message += 'We never call on that user. Try asking my admin to heed that username.'
+        elif user in active_users:
+            message += 'I\'m not ignoring that user.'
+        elif user in absent_users:
+            absent_users.remove(user)
+            message += 'I\'ll start calling on @%s again at the next standup.' % user
+
+    post_message(message)
 
 
 def ignoring():
@@ -314,7 +324,6 @@ def ready(msguser):
 
 
 def help(topic=''):
-    print 'made it into the help func'
     if topic == '':
         post_message(
             'My commands are !standup, !start, !cancel, !next, !ready, !skip, !later, !table, !left, !ignore, !heed, '
@@ -365,7 +374,7 @@ def main():
     text = request.form.get("text", "")
 
     # match = re.findall(r'(yo chanbot|chanbot)', text)
-    if not text.lower().startsWith(trigger):
+    if not text.lower().startswith(trigger):
         return
 
     args = text[len(trigger) + 1:].split(" ")
