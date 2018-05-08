@@ -25,7 +25,8 @@ ignore_users = os.getenv('IGNORE_USERS', '[]')
 
 init_greeting = os.getenv('INIT_GREETING', 'Good morning!')
 start_message = os.getenv('START_MESSAGE',
-                          'What did you work on yesterday? What are you working on today? What, if any, are your blockers?')
+                          'What did you work on yesterday? What are you working on today? What, if any, are your '
+                          'blockers?')
 
 giphy = True if os.getenv('GIPHY', 'false').lower() == 'true' else False
 
@@ -123,7 +124,7 @@ def standup_users():
 
     ignore_users_array = eval(ignore_users)
 
-    channel_id = '';
+    channel_id = ''
     channel_name = channel.replace('#', '')  # for some reason we skip the # in this API call
     all_channels = slack.channels.list(1)  # 1 means we skip any archived rooms
     for one_channel in all_channels.body['channels']:
@@ -403,6 +404,11 @@ def main():
         ready(msguser)
 
     return json.dumps({})
+
+
+@app.route("/", methods=['GET'])
+def main():
+    return 'suh'
 
 
 if __name__ == "__main__":
