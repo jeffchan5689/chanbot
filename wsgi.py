@@ -1,1 +1,1 @@
-from morgenbot import app as application
+from chanbot import app as application
