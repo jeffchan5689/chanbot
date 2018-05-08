@@ -406,7 +406,7 @@ def main():
     return json.dumps({})
 
 
-@app.route("/", methods=['GET'])
+@app.route("/pls/", methods=['GET'])
 def main():
     return 'suh'
 
