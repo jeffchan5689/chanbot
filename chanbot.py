@@ -354,8 +354,9 @@ def help(topic=''):
 @app.route("/", methods=['POST'])
 def main():
     # ignore message we sent
-    msguser = request.form.get("user_name", "").strip()
-    if msguser == username or msguser.lower() == "slackbot": return
+    user = request.form.get("user_name", "").strip()
+    print user
+    if user == username or user.lower() == "slackbot": return
 
     text = request.form.get("text", "")
 
@@ -389,7 +390,7 @@ def main():
     elif command == 'later':
         later()
     elif command == 'table':
-        table(msguser, args)
+        table(user, args)
     elif command == 'left':
         left()
     elif command == 'ignore':
@@ -401,7 +402,7 @@ def main():
     elif command == 'help':
         help(args)
     elif command == 'ready':
-        ready(msguser)
+        ready(user)
 
     return json.dumps({})
 
