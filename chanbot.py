@@ -10,7 +10,7 @@ import urllib2
 
 from slacker import Slacker
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -314,10 +314,12 @@ def ready(msguser):
 
 
 def help(topic=''):
+    print 'made it into the help func'
     if topic == '':
         post_message(
-            'My commands are !standup, !start, !cancel, !next, !ready, !skip, !later, !table, !left, !ignore, !heed, and !ignoring.\nAsk me "!help <command> to learn what they do.')
-        return
+            'My commands are !standup, !start, !cancel, !next, !ready, !skip, !later, !table, !left, !ignore, !heed, '
+            'and !ignoring.\nAsk me "!help <command> to learn what they do.')
+        return jsonify(text='<https://media.giphy.com/media/rl0FOxdz7CcxO/giphy.gif|IT\'S HAPPENING>')
 
     topic = topic[1:]
     if topic == 'standup' or topic == '!standup':
