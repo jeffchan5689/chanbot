@@ -357,7 +357,7 @@ def help(topic=''):
 def main():
     # ignore message we sent
     user = request.form.get("user_name", "").strip()
-    print user
+    print request
     if user == username or user.lower() == "slackbot": return
 
     text = request.form.get("text", "")
