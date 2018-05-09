@@ -1,5 +1,7 @@
-# Chanbot
-Good morning! Chanbot is a [Slack](https://slack.com/) standup bot. ☕
+# Intro
+Chanbot is a general purpose [Slack](https://slack.com/) bot. 
+
+This has been developed with Python 2.7 in mind. 
 
 ![screenshot](screenshot.png)
 
@@ -24,23 +26,9 @@ Good morning! Chanbot is a [Slack](https://slack.com/) standup bot. ☕
    - `INIT_GREETING`: the way Chanbot greets you when a standup is initialized. (optional; defaults to `'Good morning'`)
    - `START_MESSAGE`: the instructions Chanbot issues when a standup starts. (optional; defaults to `'What did you work on yesterday? What are you working on today? What, if any, are your blockers?'`)
    - `GIPHY`: a string representing a boolean of whether you want to use Giphy on queries Chanbot doesn't understand. (optional; defaults to `FALSE`)
-5. Add the URL where the web app is deployed as an [outgoing webhook](https://my.slack.com/services/new/outgoing-webhook) in Slack. Don't forget the trailing `/`!
+5. Add the URL where the web app is deployed as an [outgoing webhook](https://my.slack.com/services/new/outgoing-webhook) in Slack. Don't forget the trailing `/`! Use `yo` as your trigger. 
 6. Type `!standup` in your chosen channel to start a new standup. (Need help? Type `!help`.)
 
-## Alternate Installation (Docker)
 
-1. Clone the repo
-2. Install the latest version of [Docker Toolbox](https://www.docker.com/toolbox) for local development and testing
-3. Run `docker-compose up` to build the container
-4. Environment variables can be set via the `.env` file (a sample `.env.example` file is included)
-
-The container itself can be deployed to any Docker compatible host.
-
-## Thanks
-This project takes its inspiration from [tender](https://github.com/markpasc/tender), a standup bot for IRC; leaned heavily on [Slask](https://github.com/llimllib/slask) for its implementation of Flask; and uses the [Slack API](https://api.slack.com/) via the Python wrapper [Slacker](https://github.com/os/slacker). Thank you.
-
-## Contributors
-* @eelzon
-* @sos4nt
-* @frodopwns
-* @alexbain
+## Original Project
+Forked from [morgenbot](https://github.com/eelzon/morgenbot)

@@ -324,7 +324,7 @@ def ready(msguser):
 
 
 def help(args):
-    if len(args) == 0:
+    if len(args) == 1:
         post_message(
             'My commands are !standup, !start, !cancel, !next, !ready, !skip, !later, !table, !left, !ignore, !heed, '
             'and !ignoring.\nAsk me "!help <command> to learn what they do.')
